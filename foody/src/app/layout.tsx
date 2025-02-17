@@ -1,22 +1,9 @@
 import type { Metadata } from "next";
 import { Geist_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
-import Image from 'next/image';
-import fruitLogo from '../assets/fruit-mosaique.jpg';
-
-function FruitIcon() {
-  return (
-    <div className='' data-twe-ripple-init
-    data-twe-ripple-color="light">
-      <Image
-        src={fruitLogo}
-        width={75}
-        className='rounded-3xl max-w-xs transition duration-300 ease-in-out hover:scale-110 cursor-pointer'
-        alt="Picture of the App icon"
-      />
-    </div>
-  );
-}
+// import Image from 'next/image';
+// import fruitLogo from '../assets/fruit-mosaique.jpg';
+// import { useState } from "react";
 
 // const geistSans = Geist({
 //   variable: "--font-geist-sans",
@@ -46,14 +33,43 @@ export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
-}>) {
+}>) { 
+  // function FruitIcon() {
+  //   return (
+  //     <div onClick={() => setIconsCollapsed(!iconsCollapsed)}  className={``} data-twe-ripple-init
+  //       data-twe-ripple-color="light">
+  //       <Image
+  //         src={fruitLogo}
+  //         width={75}
+  //         className='rounded-3xl max-w-xs transition duration-300 ease-in-out hover:scale-110 cursor-pointer'
+  //         alt="Picture of the App icon"
+  //       />
+  //     </div>
+  //   );
+  // }
+
+  // function CollapsableIcon() {
+  //   return (
+  //     <div className={`${iconsCollapsed ? 'collapse' : 'visible'}`} data-twe-ripple-init
+  //       data-twe-ripple-color="light">
+  //       <Image
+  //         src={fruitLogo}
+  //         width={75}
+  //         className='rounded-3xl max-w-xs transition duration-300 ease-in-out hover:scale-110 cursor-pointer'
+  //         alt="Picture of the App icon"
+  //       />
+  //     </div>
+  //   );
+  // }
+
   return (
     <html lang="en">
       <body
         className={`${montserratSans.variable} ${montserratMono.variable} antialiased flex flex-row-reverse h-screen bg-gradient-to-bl from-orange-300 to-rose-600`}
       >
         <div className='flex flex-grow flex-start justify-end p-5'>
-          <FruitIcon />
+          {/* <FruitIcon/>
+          <CollapsableIcon/> */}
         </div>
         {children}
       </body>
