@@ -39,3 +39,7 @@ body {
 .suspended-text {
   @apply text-gray-500
 }
+
+#popup-modal {
+  background: rgb(0 0 0 / 30%);
+}

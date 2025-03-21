@@ -81,7 +81,7 @@ const ToastNotification = ({ toastMessage }: { toastMessage: string }) => {
 
 
 export default function Page() {
-  const title: string = 'Products';
+  const title: string = 'Product Creation Page';
   const [isSubmitting, setIsSubmitting] = React.useState(false); // Track submission status
   const [successMessage, setSuccessMessage] = React.useState<string | null>(null); // Success notification
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null); // Success notification
@@ -146,7 +146,7 @@ export default function Page() {
 
       console.log('Form submitted successfully:', response.data);
 
-      setSuccessMessage("Product created successfully!");
+      setSuccessMessage(`Product ${response.data.name} created successfully!`);
 
       setTimeout(() => {
         setSuccessMessage(null);
@@ -154,7 +154,7 @@ export default function Page() {
 
     } catch (error) {
       console.error('Error submitting form:', error);
-      setErrorMessage("Product created successfully!");
+      setErrorMessage("An error occured during product creation");
 
       setTimeout(() => {
         setErrorMessage(null);
@@ -169,7 +169,7 @@ export default function Page() {
         <div>
           <div className='p-5 flex flex-col w-full gap-10'>
 
-            <form className="max-w-sm mx-auto" onSubmit={handleProductCreation}>
+            <form className="max-w-sm" onSubmit={handleProductCreation}>
               <div className="mb-5">
                 <label htmlFor="name" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Product name</label>
                 <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Raspberry" required />

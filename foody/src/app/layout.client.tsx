@@ -94,7 +94,7 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
         <CollapsableIcon routeName="Calibration" routePath="/calibration" iconToDisplay={calibrationIcon} />
         <CollapsableIcon routeName="Dashboard" routePath="/dashboard" iconToDisplay={dashboardIcon} />
         <CollapsableIcon routeName="User" routePath="/userPage" iconToDisplay={userIcon} />
-        <CollapsableIcon routeName="Products" routePath="/products" iconToDisplay={productIcon} />
+        <CollapsableIcon routeName="Products" routePath="/productsList" iconToDisplay={productIcon} />
         <CollapsableIcon routeName="Admin" routePath="/adminPage" iconToDisplay={adminIcon} />
       </div>
       {children}
