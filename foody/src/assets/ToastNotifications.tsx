@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ToastNotificationProps {
     icon: string; // This allows any valid JSX element (SVG, Image, Font Icon, etc.)
@@ -12,15 +12,31 @@ const ToastNotifications: React.FC<ToastNotificationProps> = ({ icon, message, d
     const [isVisible, setIsVisible] = useState(true);
     const [fade, setFade] = useState(false);
 
-    const handleClose = () => {
-        // Start the fade-out effect
-        setFade(true);
+    useEffect(() => {
+        const fadeTimeout = setTimeout(() => {
+            setFade(true); // Start fading out after the duration
+        }, duration - 500); // Fade starts 500ms before the toast disappears (for the fade effect)
 
-        // After the fade-out completes (500ms), hide the toast completely
+        const removeTimeout = setTimeout(() => {
+            setIsVisible(false); // Hide the toast completely after the fade-out effect
+        }, duration); // Match this with the duration for the toast to stay visible
+
+        // Clean up timeouts when the component unmounts or duration changes
+        return () => {
+            clearTimeout(fadeTimeout);
+            clearTimeout(removeTimeout);
+        };
+    }, [duration]);
+
+    const handleClose = () => {
+        // In case the user manually closes the toast, trigger the fade-out effect immediately
+        setFade(true);
         setTimeout(() => {
-            setIsVisible(false);
-        }, 500); // Match this with the duration of the fade-out effect
+            setIsVisible(false); // Remove the toast after the fade-out
+        }, 500); // Fade duration
     };
+
+    if (!isVisible) return null;
 
     return (
         isVisible && (
@@ -31,7 +47,7 @@ const ToastNotifications: React.FC<ToastNotificationProps> = ({ icon, message, d
             >
                 {/* Dynamically render the icon */}
                 {icon === 'success' ? (
-                    <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-red-500 bg-red-100 rounded-lg dark:bg-red-800 dark:text-red-200">
+                    <div className="inline-flex items-center justify-center shrink-0 w-8 h-8 text-green-500 bg-green-100 rounded-lg dark:bg-green-800 dark:text-red-200">
                         <svg
                             className="w-5 h-5"
                             aria-hidden="true"
