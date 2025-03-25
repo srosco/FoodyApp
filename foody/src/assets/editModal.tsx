@@ -1,32 +1,24 @@
-import React, { useState } from 'react';
-import axios from "axios";
+import React, { ReactNode, useEffect, useState } from 'react';
 
-interface EditModalProps {
-  initialValues: FormData; // Add initialValues to props
+interface EditModalProps<T> {
+  initialValues: T;
   isOpen: boolean;
   submitLabel: string;
   title: string;
-  selectedProductId: number;
   onCancel: () => void;
-  onSubmit: (updatedProduct: FormData) => void;
+  onSubmit: (updatedData: T) => void;
+  children: ReactNode;
 }
 
-interface FormData {
-  id: number;
-  name: string;
-  category: string;
-  calories: number;
-  proteins: number;
-  fibers: number;
-  carbohydrates: number;
-}
+const EditForm: React.FC<EditModalProps<any>> = ({ isOpen, title, onSubmit, onCancel, initialValues, submitLabel, children }) => {
+  const [formData, setFormData] = useState(initialValues);
 
-const EditForm: React.FC<EditModalProps> = ({ isOpen, title, onSubmit, onCancel, initialValues, submitLabel }) => {
-  const [formData, setFormData] = useState<FormData>(initialValues);
+  useEffect(() => {
+    setFormData(initialValues);
+  }, [isOpen, initialValues]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>, field: keyof FormData) => {
-    const value = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
-    setFormData((prevState) => ({
+  const handleInputChange = (field: string, value: any) => {
+    setFormData((prevState: any) => ({
       ...prevState,
       [field]: value,
     }));
@@ -51,27 +43,11 @@ const EditForm: React.FC<EditModalProps> = ({ isOpen, title, onSubmit, onCancel,
           <div className="p-4 md:p-5">
             <h3 className="mb-5 text-lg font-normal text-gray-500 dark:text-gray-400">{title}</h3>
             <form className="space-y-4" onSubmit={handleFormSubmit}>
-              {Object.keys(formData).map((key) => {
-                const field = key as keyof FormData; // Type assertion to match FormData keys
-                return (
-                  <div key={field}>
-                    <label
-                      htmlFor={field}
-                      className="block mb-2 text-sm font-medium text-gray-900 dark:text-white"
-                    >
-                      {field.charAt(0).toUpperCase() + field.slice(1)} {/* Capitalize field name */}
-                    </label>
-                    <input
-                      type={typeof formData[field] === 'number' ? 'number' : 'text'}
-                      name={field}
-                      id={field}
-                      className="bg-gray-50 border border-gray-300 cursor-default text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-600 dark:border-gray-500 dark:placeholder-gray-400 dark:text-white"
-                      value={formData[field]}
-                      onChange={(e) => handleInputChange(e, field)}
-                      required
-                    />
-                  </div>
-                );
+              {React.Children.map(children, (child: any) => {
+                return React.cloneElement(child, {
+                  value: formData[child.props.label], // Sync form data with input value
+                  onChange: (value: any) => handleInputChange(child.props.label, value)
+                });
               })}
             </form>
           </div>
@@ -95,7 +71,6 @@ const EditForm: React.FC<EditModalProps> = ({ isOpen, title, onSubmit, onCancel,
         </div>
       </div>
     </div>
-    // 
   );
 };
 

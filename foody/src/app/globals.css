@@ -14,10 +14,18 @@
   }
 }
 
+html {
+  font-family: var(--font-montserrat-sans);
+}
+ 
+h1 {
+  font-family: var(--font-montserrat-sans);
+}
+
 body {
   color: var(--foreground);
   background: var(--background);
-  font-family: 'Montserrat', sans-serif !important;
+  font-family:  var(--font-montserrat-sans);
 }
 
 .height-available {

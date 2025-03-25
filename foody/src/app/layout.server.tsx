@@ -1,6 +1,7 @@
 // app/layout.server.tsx
 import { Metadata } from 'next';
 import LayoutClient from './layout.client'; // Import the client-side layout
+import { Montserrat } from 'next/font/google';
 
 export const metadata: Metadata = {
   title: 'Foody App',
@@ -8,13 +9,18 @@ export const metadata: Metadata = {
   // You can add other global meta tags like Open Graph, etc.
 };
 
+const montserratSans = Montserrat({
+  variable: "--font-montserrat-sans",
+  subsets: ["latin"],
+});
+
 export default function LayoutServer({ children }: { children: React.ReactNode }) {
   return (
     <html lang="en">
       <head>
         {/* Add any global <head> content like fonts, styles, etc. */}
       </head>
-      <body>
+      <body className={`${montserratSans.variable} antialiased bg-gradient-to-bl from-orange-300 to-rose-600`}>
         {/* The client-side layout is wrapped here */}
         <LayoutClient>{children}</LayoutClient>
       </body>

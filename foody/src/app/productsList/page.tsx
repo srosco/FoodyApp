@@ -8,6 +8,7 @@ import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import DeleteModal from "@/assets/deleteModal";
 import EditModal from "@/assets/editModal";
 import { useNotificationContext } from "../context/NotificationContext";
+import InputField from "@/assets/InputField";
 
 const TitleOfPage = ({ title }: { title: string }) => {
     return (
@@ -46,7 +47,7 @@ type ProductRowProps = {
 const ProductRow: React.FC<ProductRowProps> = ({ productName, productCategory, productCalories, productProteins, productCarbohydrates, productFibers, onDelete, onEdit }) => {
 
     return (
-        <tr className="bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-600 rounded-lg">
+        <tr className="bg-white dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-600 rounded-lg cursor-pointer">
             <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{productName}</td>
             <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{productCategory}</td>
             <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{productCalories}</td>
@@ -72,7 +73,7 @@ export default function Page() {
     const getProductsList = async () => {
         try {
             const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_PRODUCT_LIST}`);
+                `${process.env.NEXT_PUBLIC_API_PRODUCT}`);
 
             console.log('Product List loaded successfully :', response.data);
             setProductList(response.data);
@@ -85,7 +86,7 @@ export default function Page() {
     const deleteProduct = async (productId: number, selectedProduct: Product) => {
         try {
             const response = await axios.delete(
-                `${process.env.NEXT_PUBLIC_API_PRODUCT_LIST}/${productId}`
+                `${process.env.NEXT_PUBLIC_API_PRODUCT}/${productId}`
             );
             setSuccessMessage(`The ${selectedProduct.name} has been deleted.`);
             console.log("Product deleted successfully !");
@@ -99,8 +100,9 @@ export default function Page() {
 
     const handleEditProduct = async (productId: number, updatedProduct: Product) => {
         try {
+            console.log("PRODUCT TO EDIT ==> ", updatedProduct)
             const response = await axios.put(
-                `${process.env.NEXT_PUBLIC_API_PRODUCT_LIST}/${productId}`,
+                `${process.env.NEXT_PUBLIC_API_PRODUCT}/${productId}`,
                 updatedProduct,
                 {
                     headers: {
@@ -169,9 +171,6 @@ export default function Page() {
                                         <th scope="col" className="px-6 py-4">
                                             Actions
                                         </th>
-                                        {/* <th scope="col" className="px-6 py-3">
-                                            <span className="sr-only">Edit</span>
-                                        </th> */}
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -205,14 +204,50 @@ export default function Page() {
                 <EditModal
                     isOpen={isEditModalOpen}
                     title={`Edit the product ${selectedProduct.name}`}
-                    selectedProductId={selectedProduct.id}
                     initialValues={selectedProduct}
                     submitLabel="Modify the product"
                     onCancel={handleCancel}
                     onSubmit={(updatedProduct) => handleEditProduct(selectedProduct.id, updatedProduct)}
-                />
+                >
+                    <InputField
+                        label="name"
+                        value={selectedProduct.name}
+                        onChange={(value) => setSelectedProduct({ ...selectedProduct, name: value })}
+                        type="text"
+                        readOnly
+                    />
+                    <InputField
+                        label="category"
+                        value={selectedProduct.category}
+                        onChange={(value) => setSelectedProduct({ ...selectedProduct, category: value })}
+                        type="text"
+                    />
+                    <InputField
+                        label="calories"
+                        value={selectedProduct.calories}
+                        onChange={(value) => setSelectedProduct({ ...selectedProduct, calories: value })}
+                        type="text"
+                    />
+                    <InputField
+                        label="proteins"
+                        value={selectedProduct.proteins}
+                        onChange={(value) => setSelectedProduct({ ...selectedProduct, proteins: value })}
+                        type="text"
+                    />
+                    <InputField
+                        label="fibers"
+                        value={selectedProduct.fibers}
+                        onChange={(value) => setSelectedProduct({ ...selectedProduct, fibers: value })}
+                        type="text"
+                    />
+                    <InputField
+                        label="carbohydrates"
+                        value={selectedProduct.carbohydrates}
+                        onChange={(value) => setSelectedProduct({ ...selectedProduct, carbohydrates: value })}
+                        type="text"
+                    />
+                </EditModal>
             )}
-            <div className="flex grow"></div>
         </div>
     );
 }
