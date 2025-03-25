@@ -3,14 +3,23 @@ module.exports = {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['./jest.setup.ts'],
   transform: {
-    '^.+\\.(ts|tsx)$': [
-      'ts-jest',
-      {
-        babelConfig: true, // Replace useBabelrc with babelConfig
-      },
-    ],
+    '^.+\\.(ts|tsx|js|jsx)$': ['babel-jest', {
+      presets: [
+        '@babel/preset-env',
+        '@babel/preset-react',
+        '@babel/preset-typescript',
+      ],
+      plugins: ['@babel/plugin-transform-modules-commonjs'],
+    }],
   },
-  extensionsToTreatAsEsm: ['.ts', '.tsx'],
+  transformIgnorePatterns: [
+    '/node_modules/(?!@fortawesome/free-solid-svg-icons|another-esm-package).*\\.js$',
+  ],
+  globals: {
+    'ts-jest': {
+      useBabelrc: false,
+    },
+  },
   moduleNameMapper: {
     '\\.css$': 'identity-obj-proxy',
   },
