@@ -41,8 +41,8 @@ const ToastNotifications: React.FC<ToastNotificationProps> = ({ icon, message, d
     return (
         isVisible && (
             <div
-                className={`flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800 
-            ${fade ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500`}
+                className={`pl-2 flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow-sm dark:text-gray-400 dark:bg-gray-800 
+            ${fade ? 'opacity-0' : 'opacity-100'} transition-opacity duration-500 fixed bottom-0 right-0 mr-5 mb-5"`}
                 role="alert"
             >
                 {/* Dynamically render the icon */}

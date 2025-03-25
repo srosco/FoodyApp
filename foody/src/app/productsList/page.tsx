@@ -7,7 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPen, faTrash } from '@fortawesome/free-solid-svg-icons';
 import DeleteModal from "@/assets/deleteModal";
 import EditModal from "@/assets/editModal";
-import ToastNotifications from "@/assets/ToastNotifications";
+import { useNotificationContext } from "../context/NotificationContext";
 
 const TitleOfPage = ({ title }: { title: string }) => {
     return (
@@ -67,8 +67,7 @@ export default function Page() {
     const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);  // Delete Modal state here
     const [isEditModalOpen, setIsEditModalOpen] = React.useState(false);  // Edit Modal state here
     const [selectedProduct, setSelectedProduct] = React.useState<Product | null>(null); // Store product to delete
-    const [successMessage, setSuccessMessage] = React.useState<string | null>(null); // Success notification
-    const [errorMessage, setErrorMessage] = React.useState<string | null>(null); // Success notification
+    const { setSuccessMessage, setErrorMessage } = useNotificationContext(); // Get the context methods
 
     const getProductsList = async () => {
         try {
@@ -83,16 +82,17 @@ export default function Page() {
         }
     }
 
-    const deleteProduct = async (productId: number) => {
+    const deleteProduct = async (productId: number, selectedProduct: Product) => {
         try {
             const response = await axios.delete(
                 `${process.env.NEXT_PUBLIC_API_PRODUCT_LIST}/${productId}`
             );
-
-            console.log("Product deleted successfully!");
+            setSuccessMessage(`The ${selectedProduct.name} has been deleted.`);
+            console.log("Product deleted successfully !");
             getProductsList(); // Refresh the product list
             setIsDeleteModalOpen(false); // Close the modal
         } catch (error) {
+            setSuccessMessage(`Error deleting the product : ${error}`)
             console.error('Error deleting product:', error);
         }
     };
@@ -108,11 +108,11 @@ export default function Page() {
                     }
                 });
 
-            // console.log('Form submitted successfully:', response.data);
             setSuccessMessage(`The ${response.data.name} has been edited !`);
             getProductsList(); // Refresh product list after edit
             setIsEditModalOpen(false); // Close modal after success
         } catch (error) {
+            setErrorMessage('Failed to edit the product!');
             console.error('Error editing product:', error);
         }
     };
@@ -197,7 +197,7 @@ export default function Page() {
                     isOpen={isDeleteModalOpen}
                     title="Delete Product"
                     message={`Are you sure you want to delete the product ${selectedProduct.name}?`}
-                    onSubmit={() => deleteProduct(selectedProduct.id)}
+                    onSubmit={() => deleteProduct(selectedProduct.id, selectedProduct)}
                     onCancel={handleCancel}
                 />
             )}
@@ -213,11 +213,6 @@ export default function Page() {
                 />
             )}
             <div className="flex grow"></div>
-            {successMessage && (
-                <div className="p-6 flex justify-center">
-                    <ToastNotifications message={successMessage} icon="success" />
-                </div>
-            )}
         </div>
     );
 }

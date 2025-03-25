@@ -13,12 +13,24 @@ import dashboardIcon from '../assets/dashboard.svg';
 import userIcon from '../assets/user.svg';
 import productIcon from '../assets/products.svg';
 import calibrationIcon from '../assets/calibration.svg';
+import { useNotificationContext } from "./context/NotificationContext";
+import ToastNotifications from "@/assets/ToastNotifications";
 
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
   const [isClient, setIsClient] = useState(false);
   const [iconsCollapsed, setIconsCollapsed] = useState(true);
   const router = useRouter();
+  const { successMessage, errorMessage, clearMessages } = useNotificationContext();
+  
+    React.useEffect(() => {
+      if (successMessage || errorMessage) {
+        const timer = setTimeout(() => {
+          clearMessages();
+        }, 5000);
+        return () => clearTimeout(timer);
+      }
+    }, [successMessage, errorMessage, clearMessages]);
 
   // Ensuring we are on the client side to prevent SSR issues
   useEffect(() => {
@@ -91,13 +103,15 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
       <div>
         <FruitIcon />
         <CollapsableIcon routeName="HomePage" routePath="/" iconToDisplay={homeIcon} />
-        <CollapsableIcon routeName="Calibration" routePath="/calibration" iconToDisplay={calibrationIcon} />
+        {/* <CollapsableIcon routeName="Calibration" routePath="/calibration" iconToDisplay={calibrationIcon} /> */}
         <CollapsableIcon routeName="Dashboard" routePath="/dashboard" iconToDisplay={dashboardIcon} />
         <CollapsableIcon routeName="User" routePath="/userPage" iconToDisplay={userIcon} />
         <CollapsableIcon routeName="Products" routePath="/productsList" iconToDisplay={productIcon} />
         <CollapsableIcon routeName="Admin" routePath="/adminPage" iconToDisplay={adminIcon} />
       </div>
       {children}
+        {successMessage && <ToastNotifications message={successMessage} icon="success" />}
+        {errorMessage && <ToastNotifications message={errorMessage} icon="error" />}
     </div>
   );
 }

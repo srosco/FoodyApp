@@ -37,38 +37,6 @@ const EditForm: React.FC<EditModalProps> = ({ isOpen, title, onSubmit, onCancel,
     onSubmit(formData); // Call the onSubmit function passed from parent
   };
 
-  // const handleSubmit = async (e: React.FormEvent) => {
-  //   e.preventDefault(); // Prevent page refresh on form submit
-  //   setIsSubmitting(true);
-
-  //   try {
-  //     const response = await axios.put(
-  //       `${process.env.NEXT_PUBLIC_API_PRODUCT_LIST}/${selectedProductId}`,
-  //       formData,
-  //       {
-  //         headers: {
-  //           'Content-Type': 'application/json',
-  //         }
-  //       });
-
-  //     console.log('Form submitted successfully:', response.data);
-
-  //     setSuccessMessage(`Product ${response.data.name} created successfully!`);
-
-  //     setTimeout(() => {
-  //       setSuccessMessage(null);
-  //     }, 3000);
-
-  //   } catch (error) {
-  //     console.error('Error submitting form:', error);
-  //     setErrorMessage("An error occured during product creation");
-
-  //     setTimeout(() => {
-  //       setErrorMessage(null);
-  //     }, 3000);
-  //   }
-  // }
-
   if (!isOpen) return null;
   return (
     <div
