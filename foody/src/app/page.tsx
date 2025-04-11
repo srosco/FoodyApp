@@ -27,7 +27,7 @@ export default function Home() {
         <TextBlock textContent={subtitle1} />
         <TextBlock textContent={subtitle2} />
         <Link className="p-5 w-fit place-self-center bg-gradient-to-bl from-blue-900 to-fuchsia-500 bg-clip-text text-transparent font-bold
-      max-w-xs transition duration-300 ease-in-out hover:scale-95 cursor-pointer" href="/calibration">Click here to get started</Link>
+      max-w-xs transition duration-300 ease-in-out hover:scale-95 cursor-pointer" href="/login">Click here to get started</Link>
       </div>
     </div>
   );

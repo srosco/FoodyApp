@@ -17,10 +17,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <head>
       </head>
+      
       <NotificationProvider>
         <body
           className={`${montserrat_sans.variable} antialiased bg-gradient-to-bl from-orange-300 to-rose-600`}
-        >
+          >
           <LayoutClient>{children}</LayoutClient>
         </body>
       </NotificationProvider>

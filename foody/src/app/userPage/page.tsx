@@ -1,7 +1,8 @@
 "use client";
-import axios from "axios";
 import "../globals.css";
-import React, { useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { UserContext } from "../context/UserContext";
+import { redirect } from "next/navigation";
 
 type User = {
   id: number;
@@ -24,24 +25,11 @@ const TitleOfPage = ({ title }: { title: string }) => {
 }
 
 export default function Page() {
-  const [user, setUser] = React.useState<User>();
+  const { userData, logout } = useContext(UserContext) as any;
 
-  const getUser = async () => {
-    try {
-      const response = await axios.get(
-        `${process.env.NEXT_PUBLIC_API_USER}/${1}`);
-
-      console.log('User infos loaded successfully :', response.data);
-      setUser(response.data);
-
-    } catch (error) {
-      console.error('Error getting user :', error);
+    if (!userData) {
+      redirect('/login'); // Redirect to login if user is not logged in
     }
-  }
-
-  useEffect(() => {
-    getUser();
-  }, []);
 
   const title: string = 'User page';
 
@@ -49,15 +37,17 @@ export default function Page() {
     <div>
       <TitleOfPage title={title} />
       <div className='p-5 flex flex-col w-full gap-10'>
-        {user && (
+        {userData ? (
           <div>
-            <div>Id : <strong>{user.id}</strong></div>
-            <div>First name : <strong>{user.first_name}</strong></div>
-            <div>Last name : <strong>{user.last_name}</strong></div>
-            <div>Email : <strong>{user.email}</strong></div>
-            <div>Current Maccros : <strong>{user.current_maccros}</strong></div>
-            <div>Aimed Maccros : <strong>{user.aimed_maccros}</strong></div>
+            <div>Id: <strong>{userData.id}</strong></div>
+            <div>First name: <strong>{userData.first_name}</strong></div>
+            <div>Last name: <strong>{userData.last_name}</strong></div>
+            <div>Email: <strong>{userData.email}</strong></div>
+            <div>Current Maccros: <strong>{userData.current_maccros}</strong></div>
+            <div>Aimed Maccros: <strong>{userData.aimed_maccros}</strong></div>
           </div>
+        ) : (
+          <p>Loading user data...</p> // Optional loading state or message
         )}
       </div>
     </div>

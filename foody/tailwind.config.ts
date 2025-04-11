@@ -8,6 +8,12 @@ export default {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     flowbite.content(),
   ],
+  safelist: [
+    {
+      pattern: /bg-(.*)-(.*)/,
+      variants: ['hover'],
+    },
+  ],
   theme: {
     extend: {
       animation: {

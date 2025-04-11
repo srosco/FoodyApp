@@ -15,6 +15,7 @@ import productIcon from '../assets/products.svg';
 import calibrationIcon from '../assets/calibration.svg';
 import { useNotificationContext } from "./context/NotificationContext";
 import ToastNotifications from "@/assets/ToastNotifications";
+import { UserProvider } from "./context/UserContext";
 
 
 export default function LayoutClient({ children }: { children: React.ReactNode }) {
@@ -99,19 +100,22 @@ export default function LayoutClient({ children }: { children: React.ReactNode }
   });
 
   return (
-    <div className="flex flex-grow flex-start flex-row-reverse justify-between p-5 h-screen overflow-hidden">
-      <div>
-        <FruitIcon />
-        <CollapsableIcon routeName="HomePage" routePath="/" iconToDisplay={homeIcon} />
-        {/* <CollapsableIcon routeName="Calibration" routePath="/calibration" iconToDisplay={calibrationIcon} /> */}
-        <CollapsableIcon routeName="Dashboard" routePath="/dashboard" iconToDisplay={dashboardIcon} />
-        <CollapsableIcon routeName="User" routePath="/userPage" iconToDisplay={userIcon} />
-        <CollapsableIcon routeName="Products" routePath="/productsList" iconToDisplay={productIcon} />
-        <CollapsableIcon routeName="Admin" routePath="/adminPage" iconToDisplay={adminIcon} />
-      </div>
-      {children}
-        {successMessage && <ToastNotifications message={successMessage} icon="success" />}
-        {errorMessage && <ToastNotifications message={errorMessage} icon="error" />}
-    </div>
+      <UserProvider>
+        <div className="flex flex-grow flex-start flex-row-reverse justify-between p-5 h-screen overflow-hidden">
+          <div className="flex flex-col gap-5">
+            <FruitIcon />
+            <CollapsableIcon routeName="HomePage" routePath="/" iconToDisplay={homeIcon} />
+            {/* <CollapsableIcon routeName="Calibration" routePath="/calibration" iconToDisplay={calibrationIcon} /> */}
+            <CollapsableIcon routeName="Carts" routePath="/cartList" iconToDisplay={calibrationIcon} />
+            <CollapsableIcon routeName="Dashboard" routePath="/dashboard" iconToDisplay={dashboardIcon} />
+            <CollapsableIcon routeName="User" routePath="/userPage" iconToDisplay={userIcon} />
+            <CollapsableIcon routeName="Products" routePath="/productsList" iconToDisplay={productIcon} />
+            <CollapsableIcon routeName="Admin" routePath="/adminPage" iconToDisplay={adminIcon} />
+          </div>
+            {children}
+            {successMessage && <ToastNotifications message={successMessage} icon="success" />}
+            {errorMessage && <ToastNotifications message={errorMessage} icon="error" />}
+        </div>
+      </UserProvider>
   );
 }
