@@ -62,13 +62,15 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onCancel, onSuccess }) => {
           );
           console.log('User data : ', responseUser.data);
           setUserData(responseUser.data);
+          setTimeout(() => {
+            setSuccessMessage(`Successfully logged in`);            
+            onSuccess(); // Triggers post-login action
+          }, 100);
         }
   
         else {
           setErrorMessage('Login failed. Please check your credentials.');
         }
-        setSuccessMessage(`Successfully logged in`);
-        onSuccess();
   
       } catch (err) {
         setErrorMessage('Login failed. Please check your credentials.');

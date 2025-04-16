@@ -48,12 +48,12 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ cartName, cartDate, cartCalories, cartCarbohydrates, cartFibers, cartProteins, cartId, onEdit, onAssignToMe, redirectToCartProducts }) => {
     return (
-        <div className="max-w-sm p-6 shadow-2xl border-gray-800 rounded-lg dark:bg-gray-800 dark:border-gray-700 mb-4 w-[450px] h-[350px] bg-gradient-to-br from-amber-400 to-lime-100">
+        <div className="max-w-sm p-6 shadow-2xl border-gray-800 rounded-lg dark:bg-gray-800 dark:border-gray-700 mb-4 w-[450px] h-[360px] bg-gradient-to-br from-amber-400 to-lime-100">
             <h5 className="flex place-content-between mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><p>{cartName}</p> <p>ID: {cartId}</p> </h5>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Calories : <strong>{cartCalories}</strong></p>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Proteins : <strong>{cartProteins}</strong></p>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Carbohydrates : <strong>{cartCarbohydrates}</strong></p>
-            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Fibers : <strong>{cartFibers}</strong></p>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Calories : <strong>{cartCalories.toFixed(2)}</strong></p>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Proteins : <strong>{cartProteins.toFixed(2)}</strong></p>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Carbohydrates : <strong>{cartCarbohydrates.toFixed(2)}</strong></p>
+            <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Fibers : <strong>{cartFibers.toFixed(2)}</strong></p>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Created at : <strong>{cartDate}</strong></p>
             <button
                 onClick={redirectToCartProducts}
@@ -90,12 +90,14 @@ export default function Page() {
     const [selectedCart, setSelectedCart] = React.useState<Cart | null>(null); // Store cart to delete
     const router = useRouter();
 
+    // const roundedValue = Number(total_carbohydrates.toFixed(2));
+
+
     const getCartsList = async () => {
         try {
             const response = await axios.get(
                 `${process.env.NEXT_PUBLIC_API_CART_LIST}`);
 
-            // console.log('Cart List loaded successfully :', response.data);
             setCartsList(response.data);
 
         } catch (error) {
@@ -143,7 +145,6 @@ export default function Page() {
 
     const handleEditCart = async (updatedCart: Cart) => {
         try {
-            // console.log("PRODUCT TO EDIT ==> ", updatedCart)
             const response = await axios.put(
                 `${process.env.NEXT_PUBLIC_API_CART}/${updatedCart.id}`,
                 updatedCart,
@@ -163,12 +164,8 @@ export default function Page() {
     };
 
     const handleAssignCartToMe = async (updatedCart: Cart) => {
-        console.log(userData);
-        console.log('qdssqdqsdqs');
         if (userData) {
-            isLoginModalOpen && setIsLoginModalOpen(false);
-            console.log('userData', userData.id);
-            // const updatedCartPayload = { "user_id": userData.id };
+            setIsLoginModalOpen(false);
             updatedCart.user_id = userData.id;
             try {
                 const response = await axios.put(
@@ -194,12 +191,17 @@ export default function Page() {
         }
     };
 
+    const resetSelection = () => {
+        setActionAfterLogin("");
+        setSelectedCart(null);
+    };
+
     const handleCancel = () => {
         isDeleteModalOpen && setIsDeleteModalOpen(false); // Close Delete modal
         isEditModalOpen && setIsEditModalOpen(false); // Close Edit modal
         isLoginModalOpen && setIsLoginModalOpen(false); // Close Login modal
-        setActionAfterLogin("");
     };
+
 
     const handleActionOnceLogged = (cart: Cart) => {
         // Close modal before performing action
@@ -214,23 +216,17 @@ export default function Page() {
                 setIsEditModalOpen(true);
                 setActionAfterLogin(""); // Reset action
             }
-            else if (actionAfterLogin === "assign") {
-                isLoginModalOpen && setIsLoginModalOpen(false);
-                handleAssignCartToMe(cart);
-                setActionAfterLogin(""); // Reset action
-            }
         }, 300); // Delay for a short time to allow modal to close first
     };
 
     const title: string = 'Cart List';
 
     useEffect(() => {
-        console.log(actionAfterLogin);
         getCartsList();
         if (isLoginModalOpen === false && userData && selectedCart && actionAfterLogin === "cart") {
             setIsEditModalOpen(true);
         }
-        if (isLoginModalOpen === false && userData && selectedCart && actionAfterLogin === "assign") {
+        if (userData && selectedCart && actionAfterLogin === "assign") {
             handleAssignCartToMe(selectedCart);
         }
     }, [isLoginModalOpen, userData, selectedCart, actionAfterLogin]);
@@ -270,6 +266,7 @@ export default function Page() {
                         />
                         <InputField
                             label="user_id"
+                            customLabel="ID of the linked user"
                             value={selectedCart.user_id}
                             onChange={(value) => setSelectedCart({ ...selectedCart, user_id: value })}
                             type="number"

@@ -1,4 +1,4 @@
-Module Panier : 
+<!-- Module Panier : 
 
 Back : 
 [V] - Ajouter des produits à un panier avec une quantité donnée.
@@ -12,8 +12,8 @@ Front :
 [V] - Construire une page pour lister les paniers.
 [V] - Ajouter un bouton d'édition de panier pour changer soit son nom soit l'utilisateur affecté.
 [V] - Limiter l'accès aux boutons d'administration des paniers (seulement si l'utilisateur est connecté).
-[C] - Ajouter un bouton pour s'assigner un panier donner à son utilisateur.
-[X] - Construire une page de création de paniers avec formulaire associé.
-[X] - Ajouter un bouton de visualisation des produits dans un panier avec une administration de ces derniers.
+[V] - Ajouter un bouton pour s'assigner un panier donner à son utilisateur.
+[C] - Ajouter un bouton de visualisation des produits dans un panier avec une administration de ces derniers.
 [X] - Ajouter une page de synthèse des valeurs utilisateurs par rapport au panier associé.
-[X] - Ajouter une librairie de data visualisation (Graphiques) pour dynamiser la partie affichage de la synthèse.
+[X] - Construire une page de création de paniers avec formulaire associé.
+[X] - Ajouter une librairie de data visualisation (Graphiques) pour dynamiser la partie affichage de la synthèse. -->
