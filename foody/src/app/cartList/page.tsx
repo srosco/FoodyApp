@@ -90,9 +90,6 @@ export default function Page() {
     const [selectedCart, setSelectedCart] = React.useState<Cart | null>(null); // Store cart to delete
     const router = useRouter();
 
-    // const roundedValue = Number(total_carbohydrates.toFixed(2));
-
-
     const getCartsList = async () => {
         try {
             const response = await axios.get(
@@ -189,11 +186,6 @@ export default function Page() {
             setSelectedCart(updatedCart);
             setIsLoginModalOpen(true);
         }
-    };
-
-    const resetSelection = () => {
-        setActionAfterLogin("");
-        setSelectedCart(null);
     };
 
     const handleCancel = () => {

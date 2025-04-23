@@ -1,10 +1,10 @@
 "use client";
 import React, { useContext, useEffect } from "react";
 import "../../globals.css";
-import Link from "next/link";
 import axios from "axios";
 import InputField from "@/assets/InputField";
 import EditModal from "@/assets/editModal";
+import CreateModal from "@/assets/createModal";
 import DeleteModal from "@/assets/deleteModal";
 import LoginModal from "@/assets/loginModal";
 import { useNotificationContext } from "../../context/NotificationContext";
@@ -144,8 +144,10 @@ export default function Page() {
     };
 
     const handleOpenCreateModal = () => {
+        console.log(userData);
+        console.log(userData);
         if (userData) {
-            setIsDeleteModalOpen(true); // Open modal
+            setIsCreateModalOpen(true); // Open modal
         }
         else {
             setActionAfterLogin("create");
@@ -160,36 +162,6 @@ export default function Page() {
                     `${process.env.NEXT_PUBLIC_API_CART}/${cart?.id}/products`,
                     {
                         data: [selectedProduct.id],
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    }
-                );
-                setSuccessMessage(`The ${selectedProduct.name} has been deleted from the cart ${cart?.id}.`);
-                console.log("Product deleted successfully !");
-                getCartProductsList(); // Refresh the product list
-                setIsDeleteModalOpen(false); // Close the modal
-            } catch (error) {
-                setSuccessMessage(`Error deleting the product : ${error}`)
-                console.error('Error deleting product:', error);
-            }
-        }
-        else {
-            setActionAfterLogin("delete");
-            setIsLoginModalOpen(true);
-            setSelectedProduct(selectedProduct);
-        }
-    };
-
-    const addProductOnCart = async (selectedProduct: Product) => {
-        if (userData) {
-            try {
-                const response = await axios.delete(
-                    `${process.env.NEXT_PUBLIC_API_CART}/${cart?.id}/products`,
-                    {
-                        data: [{
-
-                        }],
                         headers: {
                             'Content-Type': 'application/json',
                         },
@@ -252,9 +224,10 @@ export default function Page() {
         isDeleteModalOpen && setIsDeleteModalOpen(false); // Close Delete modal
         isEditModalOpen && setIsEditModalOpen(false); // Close Edit modal
         isLoginModalOpen && setIsLoginModalOpen(false); // Close Login modal
+        isCreateModalOpen && setIsCreateModalOpen(false); // Close Login modal
     };
 
-    const handleActionOnceLogged = (product: Product) => {
+    const handleActionOnceLogged = (product?: Product) => {
         // Close modal before performing action
         setTimeout(() => {
             if (actionAfterLogin === "products") {
@@ -263,14 +236,19 @@ export default function Page() {
             }
             else if (actionAfterLogin === "product" && !isEditModalOpen) {
                 isLoginModalOpen && setIsLoginModalOpen(false);
-                setSelectedProduct(product); // Store product to delete
+                product && setSelectedProduct(product); // Store product to delete
                 setIsEditModalOpen(true);
                 setActionAfterLogin(""); // Reset action
             }
             else if (actionAfterLogin === "delete" && !isDeleteModalOpen) {
                 isLoginModalOpen && setIsLoginModalOpen(false);
-                setSelectedProduct(product); // Store product to delete
+                product && setSelectedProduct(product); // Store product to delete
                 setIsDeleteModalOpen(true);
+                setActionAfterLogin(""); // Reset action
+            }
+            else if (actionAfterLogin === "create" && !isCreateModalOpen) {
+                isLoginModalOpen && setIsLoginModalOpen(false);
+                setIsCreateModalOpen(true);
                 setActionAfterLogin(""); // Reset action
             }
         }, 300); // Delay for a short time to allow modal to close first
@@ -357,57 +335,24 @@ export default function Page() {
                         onCancel={handleCancel}
                     />
                 )}
-                {/* {isCreateModalOpen && userData && (
-                    <EditModal
-                    isOpen={isEditModalOpen}
-                    title={`Please select a product to add to the cart`}
-                    initialValues={selectedProduct}
-                    submitLabel="Add the selected product"
-                    onCancel={handleCancel}
-                    onSubmit={(product) => addProductOnCart(product)}
-                >
-                    <InputField
-                        label="calories"
-                        value={selectedProduct.calories}
-                        onChange={() => {}}
-                        type="text"
-                        readOnly
+                {isCreateModalOpen && userData && (
+                    <CreateModal
+                        cartId={cart && cart.id}
+                        isOpen={isCreateModalOpen}
+                        title={`Please select a product to add to the cart`}
+                        initialValues={selectedProduct}
+                        submitLabel="Add the selected product"
+                        onCancel={handleCancel}
+                        getCartProductsList={getCartProductsList}
+                        // onSubmit={(product) => addProductOnCart(product)}
+                        currentProductList={productList}
                     />
-                    <InputField
-                        label="proteins"
-                        value={selectedProduct.proteins}
-                        onChange={() => {}}
-                        type="text"
-                        readOnly
-                    />
-                    <InputField
-                        label="fibers"
-                        value={selectedProduct.fibers}
-                        onChange={() => {}}
-                        type="text"
-                        readOnly
-                    />
-                    <InputField
-                        label="carbohydrates"
-                        value={calculatedCarbs}
-                        onChange={() => {}}
-                        type="text"
-                        readOnly
-                    />
-                    <InputField
-                        label="quantity_in_grams"
-                        customLabel="Product Quantity (in grams)"
-                        value={selectedProduct.quantity_in_grams}
-                        onChange={(value) => setSelectedProduct({ ...selectedProduct, quantity_in_grams: value })}
-                        type="text"
-                    />
-                </EditModal>
-                )} */}
-                {isLoginModalOpen && selectedProduct && (
+                )}
+                {isLoginModalOpen && (
                     <LoginModal
                         isOpen={isLoginModalOpen}
                         onCancel={handleCancel}
-                        onSuccess={() => handleActionOnceLogged(selectedProduct)}
+                        onSuccess={() => handleActionOnceLogged()}
                     />
                 )}
             </div>
