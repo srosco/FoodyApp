@@ -24,7 +24,10 @@ export default function Page() {
     first_name: string;
     last_name: string;
     email: string;
-    aimed_maccros: number;
+    aimed_carbohydrates: number;
+    aimed_fibers: number;
+    aimed_proteins: number;
+    aimed_calories: number;
     cart_id: number;
     password: string;
   }
@@ -34,7 +37,10 @@ export default function Page() {
     last_name: '',
     email: '',
     password: '',
-    aimed_maccros: 0.0,
+    aimed_carbohydrates: 0.0,
+    aimed_fibers: 0.0,
+    aimed_proteins: 0.0,
+    aimed_calories: 0.0,
     cart_id: 0
   });
 
@@ -73,7 +79,10 @@ export default function Page() {
         first_name: '',
         last_name: '',
         email: '',
-        aimed_maccros: 0.0,
+        aimed_carbohydrates: 0.0,
+        aimed_fibers: 0.0,
+        aimed_proteins: 0.0,
+        aimed_calories: 0.0,
         password: '',
         cart_id: 0
       });
@@ -112,9 +121,25 @@ export default function Page() {
                 <label htmlFor="last_name" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Last Name</label>
                 <input type="text" id="last_name" name="last_name" value={formData.last_name} onChange={handleChange} className="bg-gray-50 border cursor-default border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="Doe" required />
               </div>
-              <div className="mb-5">
+              {/* <div className="mb-5">
                 <label htmlFor="aimed_maccros" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Aimed Maccros</label>
                 <input type="number" id="aimed_maccros" name="aimed_maccros" value={formData.aimed_maccros ?? ''} onChange={handleChange} className="bg-gray-50 border cursor-default border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="2000" required />
+              </div> */}
+              <div className="mb-5">
+                <label htmlFor="aimed_carbohydrates" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Aimed Carbohydrates</label>
+                <input type="number" id="aimed_carbohydrates" name="aimed_carbohydrates" value={formData.aimed_carbohydrates ?? ''} onChange={handleChange} className="bg-gray-50 border cursor-default border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="2000" required />
+              </div>
+              <div className="mb-5">
+                <label htmlFor="aimed_fibers" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Aimed Fibers</label>
+                <input type="number" id="aimed_fibers" name="aimed_fibers" value={formData.aimed_fibers ?? ''} onChange={handleChange} className="bg-gray-50 border cursor-default border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="2000" required />
+              </div>
+              <div className="mb-5">
+                <label htmlFor="aimed_proteins" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Aimed Proteins</label>
+                <input type="number" id="aimed_proteins" name="aimed_proteins" value={formData.aimed_proteins ?? ''} onChange={handleChange} className="bg-gray-50 border cursor-default border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="2000" required />
+              </div>
+              <div className="mb-5">
+                <label htmlFor="aimed_calories" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Aimed Calories</label>
+                <input type="number" id="aimed_calories" name="aimed_calories" value={formData.aimed_calories ?? ''} onChange={handleChange} className="bg-gray-50 border cursor-default border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="2000" required />
               </div>
               <div className="mb-5">
                 <label htmlFor="cart_id" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Cart ID</label>

@@ -10,6 +10,10 @@ type User = {
   last_name: string;
   email: string;
   aimed_maccros: number;
+  aimed_carbohydrates: number;
+  aimed_fibers: number;
+  aimed_proteins: number;
+  aimed_calories: number;
   current_maccros: number;
   cart_id: number;
 };
@@ -43,8 +47,10 @@ export default function Page() {
             <div>First name: <strong>{userData.first_name}</strong></div>
             <div>Last name: <strong>{userData.last_name}</strong></div>
             <div>Email: <strong>{userData.email}</strong></div>
-            <div>Current Maccros: <strong>{userData.current_maccros}</strong></div>
-            <div>Aimed Maccros: <strong>{userData.aimed_maccros}</strong></div>
+            <div>Aimed Carbohydrates: <strong>{userData.aimed_carbohydrates}</strong></div>
+            <div>Aimed Fibers: <strong>{userData.aimed_fibers}</strong></div>
+            <div>Aimed Proteins: <strong>{userData.aimed_proteins}</strong></div>
+            <div>Aimed Calories: <strong>{userData.aimed_calories}</strong></div>
           </div>
         ) : (
           <p>Loading user data...</p> // Optional loading state or message

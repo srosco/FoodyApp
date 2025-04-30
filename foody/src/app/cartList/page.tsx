@@ -236,7 +236,7 @@ export default function Page() {
                     })}
                 </div>
                 <div>
-                    <Link href="/carts">
+                    <Link href="/cartCreation">
                         <button type="button" className="text-gray-900 dark:text-white bg-gradient-to-bl from-amber-400 to-orange-700 font-bold rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
                                 transition duration-100 ease-in-out hover:scale-95">Add a cart</button>
                     </Link>

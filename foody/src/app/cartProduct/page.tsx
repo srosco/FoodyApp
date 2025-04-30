@@ -102,7 +102,7 @@ export default function Page() {
                 const response = await axios.get(
                     `${process.env.NEXT_PUBLIC_API_PRODUCT}`);
 
-                setProductList(response.data.products);
+                setProductList(response.data);
                 setCart(response.data);
 
             } catch (error) {

@@ -16,9 +16,10 @@ type User = {
   first_name: string;
   last_name: string;
   email: string;
-  aimed_maccros: number;
-  current_maccros: number;
-  cart_id: number;
+  aimed_carbohydrates: number;
+  aimed_fibers: number;
+  aimed_proteins: number;
+  aimed_calories: number;
 };
 
 type UserRowProps = {
@@ -26,16 +27,17 @@ type UserRowProps = {
   first_name: string;
   last_name: string;
   email: string;
-  aimed_maccros: number;
-  current_maccros: number;
-  cart_id: number;
+  aimed_carbohydrates: number;
+  aimed_fibers: number;
+  aimed_proteins: number;
+  aimed_calories: number;
   index: number;
   getUserList: () => void;
   onDelete: () => void;
   onEdit: () => void;
 };
 
-const UserRow: React.FC<UserRowProps> = ({ id, first_name, last_name, email, aimed_maccros, current_maccros, cart_id, index, onDelete, onEdit }) => {
+const UserRow: React.FC<UserRowProps> = ({ id, first_name, last_name, email, aimed_carbohydrates, aimed_fibers, aimed_proteins, aimed_calories, index, onDelete, onEdit }) => {
 
   return (
 
@@ -43,8 +45,10 @@ const UserRow: React.FC<UserRowProps> = ({ id, first_name, last_name, email, aim
       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{first_name}</td>
       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{last_name}</td>
       <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{email}</td>
-      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{current_maccros}</td>
-      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{aimed_maccros}</td>
+      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{aimed_carbohydrates}</td>
+      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{aimed_fibers}</td>
+      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{aimed_proteins}</td>
+      <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{aimed_calories}</td>
       {/* <td className="px-6 py-4 font-medium text-gray-900 whitespace-nowrap dark:text-white">{cart_id}</td> */}
       <td scope="col" className="px-6 py-3 gap-1">
         <button onClick={onEdit} data-modal-target="popup-modal" data-modal-toggle="popup-modal" type="button" className="mr-5 hover:text-gray-900"><FontAwesomeIcon icon={faPen} /></button>
@@ -161,10 +165,16 @@ export default function Page() {
                       Email
                     </th>
                     <th scope="col" className="px-6 py-4">
-                      Current Maccros
+                      Aimed carbohydrates
                     </th>
                     <th scope="col" className="px-6 py-4">
-                      Aimed maccros
+                      Aimed fibers
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                      Aimed proteins
+                    </th>
+                    <th scope="col" className="px-6 py-4">
+                      Aimed calories
                     </th>
                     {/* <th scope="col" className="px-6 py-4">
                       Cart ID
@@ -177,7 +187,7 @@ export default function Page() {
                 <tbody>
                   {userList && userList.map((user) => {
                     return (
-                      <UserRow onEdit={() => handleOpenEditModal(user)} onDelete={() => handleOpenModal(user)} getUserList={getUserList} id={user.id} cart_id={user.cart_id} first_name={user.first_name} last_name={user.last_name} email={user.email} current_maccros={user.current_maccros} aimed_maccros={user.aimed_maccros} key={user.id} index={user.id} />
+                      <UserRow onEdit={() => handleOpenEditModal(user)} onDelete={() => handleOpenModal(user)} getUserList={getUserList} id={user.id} first_name={user.first_name} last_name={user.last_name} email={user.email} aimed_carbohydrates={user.aimed_carbohydrates} aimed_fibers={user.aimed_fibers} aimed_proteins={user.aimed_proteins} aimed_calories={user.aimed_calories} key={user.id} index={user.id} />
                     )
                   })}
                 </tbody>
@@ -233,19 +243,32 @@ export default function Page() {
             readOnly
           />
           <InputField
-            label="current_maccros"
-            value={selectedUser.current_maccros}
-            onChange={(value) => setSelectedUser({ ...selectedUser, current_maccros: value })}
+            label="aimed_carbohydrates"
+            value={selectedUser.aimed_carbohydrates}
+            onChange={(value) => setSelectedUser({ ...selectedUser, aimed_carbohydrates: value })}
             type="text"
-            customLabel="Current Maccros"
-            readOnly
+            customLabel="Aimed Carbohydrates"
           />
           <InputField
-            label="aimed_maccros"
-            value={selectedUser.aimed_maccros}
-            onChange={(value) => setSelectedUser({ ...selectedUser, aimed_maccros: value })}
+            label="aimed_fibers"
+            value={selectedUser.aimed_fibers}
+            onChange={(value) => setSelectedUser({ ...selectedUser, aimed_fibers: value })}
             type="text"
-            customLabel="Aimed Maccros"
+            customLabel="Aimed Fibers"
+          />
+          <InputField
+            label="aimed_proteins"
+            value={selectedUser.aimed_proteins}
+            onChange={(value) => setSelectedUser({ ...selectedUser, aimed_proteins: value })}
+            type="text"
+            customLabel="Aimed Proteins"
+          />
+          <InputField
+            label="aimed_calories"
+            value={selectedUser.aimed_calories}
+            onChange={(value) => setSelectedUser({ ...selectedUser, aimed_calories: value })}
+            type="text"
+            customLabel="Aimed Calories"
           />
           {/* <InputField
             label="cart_id"
