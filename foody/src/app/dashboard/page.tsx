@@ -2,7 +2,7 @@
 
 import React, { useContext, useEffect } from "react";
 import "../globals.css";
-import { UserContext } from "../context/UserContext";
+import { UserContext, useUserContext } from "../context/UserContext";
 import LoginModal from "@/assets/loginModal";
 import axios from "axios";
 
@@ -25,13 +25,9 @@ type MaccroType = {
 
 export default function Page() {
     const title: string = 'Dashboard';
-    const { userData, logout } = useContext(UserContext) as any;
-    const [actionAfterLogin, setActionAfterLogin] = React.useState("");  // Delete Modal state here
-    const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);  // Delete Modal state here
-    // const [currentCarbohydrates, setCurrentCarbohydrates] = React.useState(null);
-    // const [currentFibers, setCurrentFibers] = React.useState(null);
-    // const [currentProteins, setCurrentProteins] = React.useState(null);
-    // const [currentCalories, setCurrentCalories] = React.useState(null);
+    const { userData, logout, loading } = useUserContext();
+    const [actionAfterLogin, setActionAfterLogin] = React.useState("");
+    const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
     const [currentMaccros, setCurrentMaccros] = React.useState<MaccroType>();
 
     const handleCancel = () => {
@@ -61,14 +57,15 @@ export default function Page() {
 
     
     useEffect(() => {
+        if (loading) return;
         if (!userData) {
             setActionAfterLogin("product");
             setIsLoginModalOpen(true);
         }
         else {
-            getUserCartMaccros();
+            !loading && getUserCartMaccros();
         }
-    }, [userData])
+    }, [userData, loading])
 
     return (
         <div>

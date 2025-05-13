@@ -8,7 +8,7 @@ import EditModal from "@/assets/editModal";
 import DeleteModal from "@/assets/deleteModal";
 import LoginModal from "@/assets/loginModal";
 import { useNotificationContext } from "../context/NotificationContext";
-import { UserContext } from "../context/UserContext";
+import { UserContext, useUserContext } from "../context/UserContext";
 import { useRouter } from "next/navigation";
 
 const TitleOfPage = ({ title }: { title: string }) => {
@@ -42,19 +42,26 @@ interface CardProps {
     cartProteins: number;
     cartFibers: number;
     onEdit: () => void;
+    onDelete: () => void;
     onAssignToMe: () => void;
     redirectToCartProducts: () => void;
 }
 
-const Card: React.FC<CardProps> = ({ cartName, cartDate, cartCalories, cartCarbohydrates, cartFibers, cartProteins, cartId, onEdit, onAssignToMe, redirectToCartProducts }) => {
+const Card: React.FC<CardProps> = ({ cartName, cartDate, cartCalories, cartCarbohydrates, cartFibers, cartProteins, cartId, onEdit, onDelete, onAssignToMe, redirectToCartProducts }) => {
     return (
-        <div className="max-w-sm p-6 shadow-2xl border-gray-800 rounded-lg dark:bg-gray-800 dark:border-gray-700 mb-4 w-[450px] h-[360px] bg-gradient-to-br from-amber-400 to-lime-100">
+        <div className="max-w-sm p-6 shadow-2xl border-gray-800 rounded-lg dark:bg-gray-800 dark:border-gray-700 mb-4 w-[450px] h-[400px] bg-gradient-to-br from-amber-400 to-lime-100">
             <h5 className="flex place-content-between mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white"><p>{cartName}</p> <p>ID: {cartId}</p> </h5>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Calories : <strong>{cartCalories.toFixed(2)}</strong></p>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Proteins : <strong>{cartProteins.toFixed(2)}</strong></p>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Carbohydrates : <strong>{cartCarbohydrates.toFixed(2)}</strong></p>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Total Fibers : <strong>{cartFibers.toFixed(2)}</strong></p>
             <p className="mb-3 font-normal text-gray-700 dark:text-gray-400">Created at : <strong>{cartDate}</strong></p>
+            <button
+                onClick={onDelete}
+                className="mt-2 inline-flex items-center cursor-pointer px-3 py-2 text-sm font-medium text-center text-white bg-gradient-to-r from-rose-500 to-red-500 rounded-lg hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+                Delete this Cart
+            </button>
             <button
                 onClick={redirectToCartProducts}
                 className="my-2 inline-flex items-center cursor-pointer px-3 py-2 text-sm font-medium text-center text-white bg-gradient-to-br from-blue-500 to-red-200 rounded-lg hover:opacity-80 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
@@ -82,7 +89,7 @@ const Card: React.FC<CardProps> = ({ cartName, cartDate, cartCalories, cartCarbo
 export default function Page() {
     const [cartList, setCartsList] = React.useState<Cart[]>([]);
     const { setSuccessMessage, setErrorMessage } = useNotificationContext(); // Get the context methods
-    const { userData, logout } = useContext(UserContext) as any;
+    const { userData, logout, loading } = useUserContext();
     const [actionAfterLogin, setActionAfterLogin] = React.useState("");  // Delete Modal state here
     const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);  // Delete Modal state here
     const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);  // Delete Modal state here
@@ -91,16 +98,33 @@ export default function Page() {
     const router = useRouter();
 
     const getCartsList = async () => {
-        try {
-            const response = await axios.get(
-                `${process.env.NEXT_PUBLIC_API_CART_LIST}`);
+        if (userData) {
+            try {
+                const response = await axios.get(
+                    `${process.env.NEXT_PUBLIC_API_CART_USER}/${userData.id}`);
 
-            setCartsList(response.data);
+                setCartsList(response.data);
 
-        } catch (error) {
-            console.error('Error submitting form:', error);
+            } catch (error) {
+                console.error('Error submitting form:', error);
+            }
+        }
+        else {
+            setActionAfterLogin("cartList");
+            setIsLoginModalOpen(true);
         }
     }
+
+    const handleOpenDeleteModal = (cart: Cart) => {
+        if (userData) {
+            setSelectedCart(cart); // Store cart to delete
+            setIsDeleteModalOpen(true);
+        }
+        else {
+            setActionAfterLogin("delete");
+            setIsLoginModalOpen(true);
+        }
+    };
 
     const handleOpenEditModal = (cart: Cart) => {
         if (userData) {
@@ -208,20 +232,37 @@ export default function Page() {
                 setIsEditModalOpen(true);
                 setActionAfterLogin(""); // Reset action
             }
+            else if (actionAfterLogin === "cartList") {
+                isLoginModalOpen && setIsLoginModalOpen(false);
+                getCartsList();
+            }
+            else if (actionAfterLogin === "delete") {
+                isLoginModalOpen && setIsLoginModalOpen(false);
+                deleteCart(cart);
+                getCartsList();
+            }
         }, 300); // Delay for a short time to allow modal to close first
     };
 
     const title: string = 'Cart List';
 
     useEffect(() => {
-        getCartsList();
-        if (isLoginModalOpen === false && userData && selectedCart && actionAfterLogin === "cart") {
+        if (loading) return;
+
+        if (!userData) {
+            setActionAfterLogin("cartList");
+            setIsLoginModalOpen(true);
+        }
+        else {
+            getCartsList();
+        }
+        if (!loading && isLoginModalOpen === false && userData && selectedCart && actionAfterLogin === "cart") {
             setIsEditModalOpen(true);
         }
-        if (userData && selectedCart && actionAfterLogin === "assign") {
+        if (!loading && userData && selectedCart && actionAfterLogin === "assign") {
             handleAssignCartToMe(selectedCart);
         }
-    }, [isLoginModalOpen, userData, selectedCart, actionAfterLogin]);
+    }, [isLoginModalOpen, userData, selectedCart, actionAfterLogin, loading]);
 
 
     return (
@@ -231,16 +272,20 @@ export default function Page() {
                 <div className="p-5 sm:rounded-lg gap-4 flex flex-wrap flex-col md:flex-row max-h-[calc(100vh-15em)] overflow-y-auto [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar]:hover:cursor-pointer [&::-webkit-scrollbar-track]:bg-gray-100   [&::-webkit-scrollbar-thumb]:bg-gray-300   dark:[&::-webkit-scrollbar-track]:bg-neutral-700   dark:[&::-webkit-scrollbar-thumb]:bg-neutral-500 pr-[5px]">
                     {cartList && cartList.map((cart) => {
                         return (
-                            <Card redirectToCartProducts={() => handleRedirectionToCart(cart)} onAssignToMe={() => handleAssignCartToMe(cart)} onEdit={() => handleOpenEditModal(cart)} cartId={cart.id} cartName={cart.name} cartDate={cart.creation_date} cartCalories={cart.total_calories} cartProteins={cart.total_proteins} cartFibers={cart.total_fibers} cartCarbohydrates={cart.total_carbohydrates} key={cart.id} />
+                            <Card redirectToCartProducts={() => handleRedirectionToCart(cart)} onDelete={() => handleOpenDeleteModal(cart)} onAssignToMe={() => handleAssignCartToMe(cart)} onEdit={() => handleOpenEditModal(cart)} cartId={cart.id} cartName={cart.name} cartDate={cart.creation_date} cartCalories={cart.total_calories} cartProteins={cart.total_proteins} cartFibers={cart.total_fibers} cartCarbohydrates={cart.total_carbohydrates} key={cart.id} />
                         )
                     })}
                 </div>
-                <div>
-                    <Link href="/cartCreation">
-                        <button type="button" className="text-gray-900 dark:text-white bg-gradient-to-bl from-amber-400 to-orange-700 font-bold rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
-                                transition duration-100 ease-in-out hover:scale-95">Add a cart</button>
-                    </Link>
-                </div>
+                {userData && (
+                    <div>
+                        <Link href="/cartCreation">
+                            <button type="button" className="text-gray-900 dark:text-white bg-gradient-to-bl from-amber-400 to-orange-700 font-bold rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
+                                        transition duration-100 ease-in-out hover:scale-95">Add a cart</button>
+                        </Link>
+                    </div>
+                )}
+
+
                 {isEditModalOpen && selectedCart && (
                     <EditModal
                         isOpen={isEditModalOpen}
@@ -279,6 +324,17 @@ export default function Page() {
                         isOpen={isLoginModalOpen}
                         onCancel={handleCancel}
                         onSuccess={() => handleActionOnceLogged(selectedCart)}
+                    />
+                )}
+
+                {isLoginModalOpen && !selectedCart && !userData && (
+                    <LoginModal
+                        isOpen={isLoginModalOpen}
+                        onCancel={handleCancel}
+                        onSuccess={() => {
+                            getCartsList(),
+                                handleCancel
+                        }}
                     />
                 )}
             </div>

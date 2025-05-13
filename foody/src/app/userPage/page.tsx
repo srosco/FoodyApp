@@ -1,7 +1,7 @@
 "use client";
 import "../globals.css";
-import React, { useContext, useEffect, useState } from "react";
-import { UserContext } from "../context/UserContext";
+import React, { useEffect } from "react";
+import { useUserContext } from "../context/UserContext";
 import { redirect } from "next/navigation";
 
 type User = {
@@ -29,11 +29,17 @@ const TitleOfPage = ({ title }: { title: string }) => {
 }
 
 export default function Page() {
-  const { userData, logout } = useContext(UserContext) as any;
+  // const { userData, logout, loading } = useUserContext();
+  const { userData, logout, loading } = useUserContext();
 
+  useEffect(() => {
+    if (loading) return;
     if (!userData) {
       redirect('/login'); // Redirect to login if user is not logged in
     }
+
+  }, [userData, loading]);
+
 
   const title: string = 'User page';
 
@@ -51,6 +57,12 @@ export default function Page() {
             <div>Aimed Fibers: <strong>{userData.aimed_fibers}</strong></div>
             <div>Aimed Proteins: <strong>{userData.aimed_proteins}</strong></div>
             <div>Aimed Calories: <strong>{userData.aimed_calories}</strong></div>
+            <button
+                onClick={logout}
+                className="my-2 inline-flex items-center cursor-pointer px-3 py-2 text-sm font-medium text-center text-white bg-gradient-to-br from-blue-500 to-red-200 rounded-lg hover:opacity-95 focus:ring-4 focus:outline-none focus:ring-blue-300 dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800"
+            >
+                Logout
+            </button>
           </div>
         ) : (
           <p>Loading user data...</p> // Optional loading state or message

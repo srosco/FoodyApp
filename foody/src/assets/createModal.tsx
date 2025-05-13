@@ -2,7 +2,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import axios from 'axios';
 import React, { ReactNode, useContext, useEffect, useState } from 'react';
 import { faCartPlus } from '@fortawesome/free-solid-svg-icons';
-import { UserContext } from '@/app/context/UserContext';
+import { UserContext, useUserContext } from '@/app/context/UserContext';
 import { useNotificationContext } from '@/app/context/NotificationContext';
 
 type Product = {
@@ -94,7 +94,7 @@ const CartModal: React.FC<CreateModalProps<any>> = ({ cartId, isOpen, title, onC
   const [formData, setFormData] = React.useState<FormData>({
     quantity_in_grams: 0.0
   });
-  const { userData, logout } = useContext(UserContext) as any;
+  const { userData, logout, loading } = useUserContext();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>, productId: number) => {
     const { name, value } = e.target;

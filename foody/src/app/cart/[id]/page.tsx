@@ -8,7 +8,7 @@ import CreateModal from "@/assets/createModal";
 import DeleteModal from "@/assets/deleteModal";
 import LoginModal from "@/assets/loginModal";
 import { useNotificationContext } from "../../context/NotificationContext";
-import { UserContext } from "../../context/UserContext";
+import { UserContext, useUserContext } from "../../context/UserContext";
 import { useParams } from 'next/navigation';
 import { faPen, faTrash, faCartPlus } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -88,7 +88,7 @@ export default function Page() {
     const [productList, setProductList] = React.useState<Product[]>([]);
     const [cart, setCart] = React.useState<Cart>();
     const { setSuccessMessage, setErrorMessage } = useNotificationContext(); // Get the context methods
-    const { userData, logout } = useContext(UserContext) as any;
+    const { userData, logout, loading } = useUserContext();
     const [actionAfterLogin, setActionAfterLogin] = React.useState("");  // Delete Modal state here
     const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);  // Delete Modal state here
     const [isDeleteModalOpen, setIsDeleteModalOpen] = React.useState(false);  // Delete Modal state here

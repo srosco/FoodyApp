@@ -2,8 +2,11 @@
 
 import axios from "axios";
 import "../globals.css";
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useNotificationContext } from "../context/NotificationContext";
+import { UserContext, useUserContext } from "../context/UserContext";
+import LoginModal from "@/assets/loginModal";
+import { useRouter } from "next/navigation";
 
 const TitleOfPage = ({ title }: { title: string }) => {
   return (
@@ -18,9 +21,13 @@ const TitleOfPage = ({ title }: { title: string }) => {
 export default function Page() {
   const title: string = 'Cart Creation Page';
   const [isSubmitting, setIsSubmitting] = React.useState(false); // Track submission status
+  const { userData, logout, loading } = useUserContext();
+  const [actionAfterLogin, setActionAfterLogin] = React.useState("");
+  const [isLoginModalOpen, setIsLoginModalOpen] = React.useState(false);
   const { setSuccessMessage, setErrorMessage } = useNotificationContext(); // Get the context methods
   const [selectedProducts, setSelectedProducts] = React.useState<Product[]>([]);
   const [productList, setProductList] = React.useState<Product[]>([]);
+  const router = useRouter();
 
 
   const getCartProductsList = async () => {
@@ -36,9 +43,15 @@ export default function Page() {
   }
 
   useEffect(() => {
-    getCartProductsList();
-  }, []);
-  
+    if (loading) return;
+    if (!userData) {
+      setIsLoginModalOpen(true);
+    }
+    else {
+      getCartProductsList();
+    }
+  }, [userData, loading])
+
   type Product = {
     id: number;
     name: string;
@@ -84,7 +97,12 @@ export default function Page() {
       ...prevState,
       [name]: parsedValue, // Update the value for the corresponding field
     }));
-  };  
+  };
+
+  const handleCancel = () => {
+    isLoginModalOpen && setIsLoginModalOpen(false); // Close Login modal
+  };
+
 
   const formatDate = (date: Date): string => {
     const day = String(date.getDate()).padStart(2, '0');
@@ -102,6 +120,7 @@ export default function Page() {
     const products: ProductId[] = selectedProducts.map(product => ({ id: product.id }));
     formData.creation_date = todayFormatted;
     formData.products = products;
+    formData.user_id = userData.id;
 
     try {
       const response = await axios.post(
@@ -123,6 +142,7 @@ export default function Page() {
       console.log('Form submitted successfully:', response.data);
 
       setSuccessMessage(`The ${response.data.name} has been created successfully!`);
+      router.push(`/cartList`);
 
     } catch (error) {
       console.error('Error submitting form:', error);
@@ -220,42 +240,50 @@ export default function Page() {
 
   return (
     <div>
+      {isLoginModalOpen && (
+        <LoginModal
+          isOpen={isLoginModalOpen}
+          onCancel={handleCancel}
+          onSuccess={() => handleCancel()}
+        />
+      )}
       <div>
         <TitleOfPage title={title} />
-        <div>
-          <div className='p-5 flex flex-col w-full gap-10'>
+        {userData ? (
+          <div>
+            <div className='p-5 flex flex-col w-full gap-10'>
 
-            <form className="max-w-sm" onSubmit={handleProductCreation}>
-              <div className="mb-5">
-                <label htmlFor="name" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Cart name</label>
-                <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="cart 1" required />
-              </div>
-              <div className="mb-5">
-                <label htmlFor="user_id" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white weight">User Id</label>
-                <input type="number" id="user_id" name="user_id" value={formData.user_id ?? ''} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="25" required />
-              </div>
-              <div className="mb-5">
-                <DropdownSearch />
-              </div>
-              {selectedProducts.length > 0 &&
+              <form className="max-w-sm" onSubmit={handleProductCreation}>
                 <div className="mb-5">
-                   <strong>Products that will be added :</strong>
+                  <label htmlFor="name" className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">Cart name</label>
+                  <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" placeholder="cart 1" required />
                 </div>
-              }
-              {selectedProducts && selectedProducts.map(product => {
-                return (
-                  <div key={product.id} className="mb-2">
-                   {/* <label className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">{product.name}</label>  */}
-                    <label htmlFor="product_quantity" className="block mb-2 text-sm text-gray-900 dark:text-white"><strong>- {product.name}</strong></label>
-                    
+                <div className="mb-5">
+                  <DropdownSearch />
+                </div>
+                {selectedProducts.length > 0 &&
+                  <div className="mb-5">
+                    <strong>Products that will be added :</strong>
                   </div>
-                )
-              })}
-              <button type="submit" className="text-white bg-gradient-to-bl from-amber-400 to-orange-700 font-bold rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
+                }
+                {selectedProducts && selectedProducts.map(product => {
+                  return (
+                    <div key={product.id} className="mb-2">
+                      {/* <label className="block mb-2 text-sm font-bold text-gray-900 dark:text-white">{product.name}</label>  */}
+                      <label htmlFor="product_quantity" className="block mb-2 text-sm text-gray-900 dark:text-white"><strong>- {product.name}</strong></label>
+
+                    </div>
+                  )
+                })}
+                <button type="submit" className="text-white bg-gradient-to-bl from-amber-400 to-orange-700 font-bold rounded-lg text-sm w-full px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800
                   transition duration-100 ease-in-out hover:scale-95">Create Cart</button>
-            </form>
+              </form>
+            </div>
           </div>
-        </div>
+        ) : (
+          <div>Connection is required to perform some actions here</div>
+        )}
+
       </div>
     </div>
   );
